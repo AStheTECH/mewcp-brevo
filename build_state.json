@@ -1,0 +1,109 @@
+{
+  "manifest_server_block": true,
+  "planning": true,
+  "infra": true,
+  "tool_groups": {
+    "contacts": true,
+    "companies": true,
+    "deals": true,
+    "lists": true,
+    "email_campaigns": true,
+    "senders": true,
+    "templates": true,
+    "transactional_email": true,
+    "transactional_sms": true
+  },
+  "built_from": {
+    "contacts": [
+      "contacts/get_contacts.md",
+      "contacts/create_contact.md",
+      "contacts/update_contact.md",
+      "contacts/delete_contact.md",
+      "contacts/get_contact_info.md",
+      "contacts/get_contact_stats.md"
+    ],
+    "companies": [
+      "companies/get_companies.md",
+      "companies/post_companies.md",
+      "companies/get_by_id.md",
+      "companies/patch_by_id.md",
+      "companies/delete_by_id.md",
+      "companies/post_import.md",
+      "companies/patch_link_unlink_by_id.md"
+    ],
+    "deals": [
+      "deals/get_crm_deals.md",
+      "deals/post_crm_deals.md",
+      "deals/get_crm_deals_by_id.md",
+      "deals/patch_crm_deals_by_id.md",
+      "deals/delete_crm_deals_by_id.md",
+      "deals/post_crm_deals_import.md",
+      "deals/patch_crm_deals_link_unlink_by_id.md"
+    ],
+    "lists": [
+      "lists/get_lists.md",
+      "lists/get_list.md",
+      "lists/create_list.md",
+      "lists/update_list.md",
+      "lists/delete_list.md",
+      "lists/add_contact_to_list.md",
+      "lists/remove_contact_from_list.md"
+    ],
+    "email_campaigns": [
+      "email/get_email_campaigns.md",
+      "email/create_email_campaign.md",
+      "email/get_email_campaign.md",
+      "email/update_email_campaign.md",
+      "email/delete_email_campaign.md",
+      "email/send_email_campaign_now.md",
+      "email/send_test_email.md",
+      "email/send_report.md",
+      "email/update_campaign_status.md",
+      "email/email_export_recipients.md",
+      "email/get_shared_template_url.md",
+      "email/upload_image_to_gallery.md"
+    ],
+    "senders": [
+      "senders/get_senders.md",
+      "senders/create_sender.md",
+      "senders/update_sender.md",
+      "senders/delete_sender.md",
+      "senders/validate_sender_by_otp.md"
+    ],
+    "templates": [
+      "templates/get_smtp_templates.md",
+      "templates/get_smtp_template.md",
+      "templates/create_smtp_template.md",
+      "templates/update_smtp_template.md",
+      "templates/delete_smtp_template.md",
+      "templates/send_test_template.md",
+      "templates/post_preview_smtp_email_templates.md"
+    ],
+    "transactional_email": [
+      "transac/send_transac_email.md",
+      "transac/get_transac_emails_list.md",
+      "transac/get_transac_email_content.md",
+      "transac/get_scheduled_email_by_id.md",
+      "transac/delete_scheduled_email_by_id.md",
+      "transac/get_transac_blocked_contacts.md",
+      "transac/delete_smtp_blocked_contacts_by_email.md",
+      "transac/get_blocked_domains.md",
+      "transac/block_new_domain.md",
+      "transac/delete_blocked_domain.md",
+      "transac/delete_hardbounces.md",
+      "transac/delete_smtp_log_by_identifier.md"
+    ],
+    "transactional_sms": [
+      "transac/send_transac_sms.md",
+      "transac/send_async_transactional_sms.md",
+      "transac/get_transac_sms_report.md",
+      "transac/get_transac_aggregated_sms_report.md",
+      "transac/get_sms_events.md",
+      "transac/get_sms_templates.md"
+    ]
+  },
+  "validation_rounds": 1,
+  "validation_passed": true,
+  "docs_status_written": true,
+  "readme": false
+}

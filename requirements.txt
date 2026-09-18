@@ -1,0 +1,5 @@
+fastmcp
+fastmcp-credentials>=0.2.0,<0.3.0
+pydantic>=2.12
+brevo-python>=5.0.2
+python-json-logger>=2.0.0

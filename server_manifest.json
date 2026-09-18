@@ -1,0 +1,1339 @@
+{
+  "manifest_version": 1,
+  "server": {
+    "name": "mewcp-brevo",
+    "package": "brevo_mcp",
+    "auth": "static",
+    "version": "v2.1.0",
+    "api_base": null
+  },
+  "tools": {
+    "groups": {
+      "contacts": {
+        "file": "contacts_tools.py",
+        "doc_source": null,
+        "register_fn": "register_contacts_tools",
+        "tools": {
+          "list_contacts": {
+            "endpoint": "GET /contacts",
+            "description": "Retrieve all contacts from your Brevo account with support for pagination, filtering, and sorting.",
+            "tier": "GET",
+            "params": [
+              {
+                "name": "limit",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Number of documents per page"
+              },
+              {
+                "name": "offset",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Index of the first document of the page"
+              },
+              {
+                "name": "modified_since",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Filter (urlencoded) the contacts modified after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). **Prefer to pass your timezone in date-time format for accurate result.**"
+              },
+              {
+                "name": "created_since",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Filter (urlencoded) the contacts created after a given UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). **Prefer to pass your timezone in date-time format for accurate result.**"
+              },
+              {
+                "name": "sort",
+                "type": "Optional[GetContactsRequestSort]",
+                "required": false,
+                "description": "Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed"
+              },
+              {
+                "name": "ids",
+                "type": "Optional[Union[int, Sequence[int]]]",
+                "required": false,
+                "description": "Filter by a list of contact IDs. You can pass a **maximum of 20 IDs**. All elements must be integers."
+              },
+              {
+                "name": "segment_id",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Id of the segment. **Either listIds or segmentId can be passed.** Must be a positive integer (minimum value of 1)."
+              },
+              {
+                "name": "list_ids",
+                "type": "Optional[Union[int, Sequence[int]]]",
+                "required": false,
+                "description": "Ids of the list. **Either listIds or segmentId can be passed.**"
+              },
+              {
+                "name": "filter",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Filter the contacts on the basis of attributes. **Allowed operator: equals. For multiple-choice options, the filter will apply an AND condition between the options. For category attributes, the filter will work with both id and value. (e.g. filter=equals(FIRSTNAME,\"Antoine\"), filter=equals(B1, true), filter=equals(DOB, \"1989-11-23\"), filter=equals(GENDER, \"1\"), filter=equals(GENDER, \"MALE\"), filter=equals(COUNTRY,\"USA, INDIA\")**"
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "contacts",
+                "type": "List[GetContactDetails]"
+              },
+              {
+                "name": "count",
+                "type": "int"
+              }
+            ],
+            "schema": {
+              "data": "ListContactsData",
+              "result": "ListContactsResult"
+            },
+            "_orig_brevo_name": "contacts_get_contacts",
+            "_sdk_call": "contacts.get_contacts"
+          },
+          "create_contact": {
+            "endpoint": "POST /contacts",
+            "description": "<Note>Follow this format when passing a \"SMS\" phone number as an attribute.",
+            "tier": "CREATE",
+            "params": [
+              {
+                "name": "attributes",
+                "type": "Optional[Dict[str, CreateContactRequestAttributesValue]]",
+                "required": false,
+                "description": "Pass the set of attributes and their values. The attribute's parameter should be passed in capital letter while creating a contact. Values that don't match the attribute type (e.g. text or string in a date attribute) will be ignored. **These attributes must be present in your Brevo account**. For eg: **{\"FNAME\":\"Elly\", \"LNAME\":\"Roger\", \"COUNTRIES\": [\"India\",\"China\"]}**"
+              },
+              {
+                "name": "email",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Email address of the user. **Mandatory if \"ext_id\"  & \"SMS\" field is not passed.**"
+              },
+              {
+                "name": "email_blacklisted",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Set this field to blacklist the contact for emails (emailBlacklisted = true)"
+              },
+              {
+                "name": "ext_id",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Pass your own Id to create a contact."
+              },
+              {
+                "name": "list_ids",
+                "type": "Optional[Sequence[int]]",
+                "required": false,
+                "description": "Ids of the lists to add the contact to"
+              },
+              {
+                "name": "sms_blacklisted",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Set this field to blacklist the contact for SMS (smsBlacklisted = true)"
+              },
+              {
+                "name": "smtp_blacklist_sender",
+                "type": "Optional[Sequence[str]]",
+                "required": false,
+                "description": "transactional email forbidden sender for contact. Use only for email Contact ( only available if updateEnabled = true )"
+              },
+              {
+                "name": "update_enabled",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Facilitate to update the existing contact in the same request (updateEnabled = true)"
+              },
+              {
+                "name": "force_merge",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "When true, if the contact being created shares an identifier (email, SMS, ext_id, whatsapp, landline) with an existing contact, the two contacts are force-merged. The contact with the most recent `last_modified` timestamp is retained; the other is deleted. When false (default), a 4xx error is returned on identifier conflict."
+              },
+              {
+                "name": "get_id",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "When true, the response returns the `id` of the surviving contact after merge."
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "id",
+                "type": "Optional[int]"
+              }
+            ],
+            "schema": {
+              "data": "CreateContactData",
+              "result": "CreateContactResult"
+            },
+            "_orig_brevo_name": "contacts_create_contact",
+            "_sdk_call": "contacts.create_contact"
+          },
+          "update_contact": {
+            "endpoint": "PUT /contacts/{identifier}",
+            "description": "Update an existing contact identified by their email address, numeric ID, or other identifier.",
+            "tier": "UPDATE",
+            "params": [
+              {
+                "name": "identifier",
+                "type": "UpdateContactRequestIdentifier",
+                "required": true,
+                "description": "Email (urlencoded) OR ID of the contact OR EXT_ID attribute (urlencoded) OR its SMS attribute value OR its WHATSAPP attribute value OR its LANDLINE_NUMBER attribute value"
+              },
+              {
+                "name": "identifier_type",
+                "type": "Optional[UpdateContactRequestIdentifierType]",
+                "required": false,
+                "description": "email_id for Email, contact_id for ID of the contact, ext_id for EXT_ID attribute, phone_id for SMS attribute, whatsapp_id for WHATSAPP attribute, landline_number_id for LANDLINE_NUMBER attribute"
+              },
+              {
+                "name": "attributes",
+                "type": "Optional[Dict[str, UpdateContactRequestAttributesValue]]",
+                "required": false,
+                "description": "Pass the set of attributes to be updated. **These attributes must be present in your account**. To update existing email address of a contact with the new one please pass EMAIL in attributes. For example, **{ \"EMAIL\":\"newemail@domain.com\", \"FNAME\":\"Ellie\", \"LNAME\":\"Roger\", \"COUNTRIES\":[\"India\",\"China\"]}**. The attribute's parameter should be passed in capital letter while updating a contact. Values that don't match the attribute type (e.g. text or string in a date attribute) will be ignored .Keep in mind transactional attributes can be updated the same way as normal attributes. Mobile Number in **SMS** field should be passed with proper country code. For example: **{\"SMS\":\"+91xxxxxxxxxx\"} or {\"SMS\":\"0091xxxxxxxxxx\"}**"
+              },
+              {
+                "name": "email_blacklisted",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Set/unset this field to blacklist/allow the contact for emails (emailBlacklisted = true)"
+              },
+              {
+                "name": "ext_id",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Pass your own Id to update ext_id of a contact."
+              },
+              {
+                "name": "list_ids",
+                "type": "Optional[Sequence[int]]",
+                "required": false,
+                "description": "Ids of the lists to add the contact to"
+              },
+              {
+                "name": "sms_blacklisted",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Set/unset this field to blacklist/allow the contact for SMS (smsBlacklisted = true)"
+              },
+              {
+                "name": "smtp_blacklist_sender",
+                "type": "Optional[Sequence[str]]",
+                "required": false,
+                "description": "transactional email forbidden sender for contact. Use only for email Contact"
+              },
+              {
+                "name": "unlink_list_ids",
+                "type": "Optional[Sequence[int]]",
+                "required": false,
+                "description": "Ids of the lists to remove the contact from"
+              },
+              {
+                "name": "force_merge",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "When true, if the contact being updated shares an identifier (email, SMS, ext_id, whatsapp, landline) with an existing contact, the two contacts are force-merged. The contact with the most recent `last_modified` timestamp is retained; the other is deleted. When false (default), a 4xx error is returned on identifier conflict."
+              }
+            ],
+            "response_fields": [],
+            "schema": {
+              "data": "UpdateContactData",
+              "result": "UpdateContactResult"
+            },
+            "_orig_brevo_name": "contacts_update_contact",
+            "_sdk_call": "contacts.update_contact"
+          },
+          "delete_contact": {
+            "endpoint": "DELETE /contacts/{identifier}",
+            "description": "Permanently delete a contact identified by their email address, numeric ID, or other identifier.",
+            "tier": "DELETE",
+            "params": [
+              {
+                "name": "identifier",
+                "type": "DeleteContactRequestIdentifier",
+                "required": true,
+                "description": "Email (urlencoded) OR ID of the contact OR EXT_ID attribute (urlencoded)"
+              },
+              {
+                "name": "identifier_type",
+                "type": "Optional[DeleteContactRequestIdentifierType]",
+                "required": false,
+                "description": "email_id for Email, contact_id for ID of the contact, ext_id for EXT_ID attribute, phone_id for SMS attribute, whatsapp_id for WHATSAPP attribute, landline_number_id for LANDLINE_NUMBER attribute"
+              }
+            ],
+            "response_fields": [],
+            "schema": {
+              "data": "DeleteContactData",
+              "result": "DeleteContactResult"
+            },
+            "_orig_brevo_name": "contacts_delete_contact",
+            "_sdk_call": "contacts.delete_contact"
+          },
+          "get_contact": {
+            "endpoint": "GET /contacts/{identifier}",
+            "description": "<Note>Follow this format when passing a \"SMS\" phone number as an attribute.",
+            "tier": "GET",
+            "params": [
+              {
+                "name": "identifier",
+                "type": "GetContactInfoRequestIdentifier",
+                "required": true,
+                "description": "Email (urlencoded) OR ID of the contact OR its SMS attribute value OR EXT_ID attribute (urlencoded)"
+              },
+              {
+                "name": "identifier_type",
+                "type": "Optional[GetContactInfoRequestIdentifierType]",
+                "required": false,
+                "description": "email_id for Email, phone_id for SMS attribute, contact_id for ID of the contact, ext_id for EXT_ID attribute, whatsapp_id for WHATSAPP attribute, landline_number_id for LANDLINE_NUMBER attribute"
+              },
+              {
+                "name": "start_date",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "**Mandatory if endDate is used.** Starting date (YYYY-MM-DD) of the statistic events specific to campaigns. Must be lower than equal to endDate. Must not be greater than the current date."
+              },
+              {
+                "name": "end_date",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "**Mandatory if startDate is used.** Ending date (YYYY-MM-DD) of the statistic events specific to campaigns. Must be greater than equal to startDate. Must not be greater than the current date."
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "attributes",
+                "type": "GetContactInfoResponseAttributes"
+              },
+              {
+                "name": "createdAt",
+                "type": "str"
+              },
+              {
+                "name": "email",
+                "type": "Optional[str]"
+              },
+              {
+                "name": "emailBlacklisted",
+                "type": "bool"
+              },
+              {
+                "name": "id",
+                "type": "int"
+              },
+              {
+                "name": "listIds",
+                "type": "List[int]"
+              },
+              {
+                "name": "listUnsubscribed",
+                "type": "Optional[List[int]]"
+              },
+              {
+                "name": "modifiedAt",
+                "type": "str"
+              },
+              {
+                "name": "smsBlacklisted",
+                "type": "bool"
+              },
+              {
+                "name": "whatsappBlacklisted",
+                "type": "bool"
+              },
+              {
+                "name": "consentGroups",
+                "type": "Optional[List[ConsentGroupItem]]"
+              },
+              {
+                "name": "statistics",
+                "type": "GetContactInfoResponseStatistics"
+              }
+            ],
+            "schema": {
+              "data": "GetContactData",
+              "result": "GetContactResult"
+            },
+            "_orig_brevo_name": "contacts_get_contact_info",
+            "_sdk_call": "contacts.get_contact_info"
+          }
+        },
+        "built_from": [
+          "contacts/get_contacts.md",
+          "contacts/create_contact.md",
+          "contacts/update_contact.md",
+          "contacts/delete_contact.md",
+          "contacts/get_contact_info.md",
+          "contacts/get_contact_stats.md"
+        ]
+      },
+      "lists": {
+        "file": "lists_tools.py",
+        "doc_source": null,
+        "register_fn": "register_lists_tools",
+        "tools": {
+          "list_contact_lists": {
+            "endpoint": "GET /contacts/lists",
+            "description": "Retrieve all contact lists from your Brevo account with support for pagination and sorting.",
+            "tier": "GET",
+            "params": [
+              {
+                "name": "limit",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Number of documents per page"
+              },
+              {
+                "name": "offset",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Index of the first document of the page"
+              },
+              {
+                "name": "sort",
+                "type": "Optional[GetListsRequestSort]",
+                "required": false,
+                "description": "Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed"
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "count",
+                "type": "Optional[int]"
+              },
+              {
+                "name": "lists",
+                "type": "Optional[List[GetListsResponseListsItem]]"
+              }
+            ],
+            "schema": {
+              "data": "ListContactListsData",
+              "result": "ListContactListsResult"
+            },
+            "_orig_brevo_name": "lists_get_lists",
+            "_sdk_call": "contacts.get_lists"
+          },
+          "create_contact_list": {
+            "endpoint": "POST /contacts/lists",
+            "description": "Create a new contact list inside a specified folder.",
+            "tier": "CREATE",
+            "params": [
+              {
+                "name": "folder_id",
+                "type": "int",
+                "required": true,
+                "description": "Id of the parent folder in which this list is to be created"
+              },
+              {
+                "name": "name",
+                "type": "str",
+                "required": true,
+                "description": "Name of the list"
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "id",
+                "type": "int"
+              }
+            ],
+            "schema": {
+              "data": "CreateContactListData",
+              "result": "CreateContactListResult"
+            },
+            "_orig_brevo_name": "lists_create_list",
+            "_sdk_call": "contacts.create_list"
+          },
+          "add_contact_to_list": {
+            "endpoint": "POST /contacts/lists/{list_id}/contacts/add",
+            "description": "Add existing contacts to a specific list by providing their email addresses, numeric IDs, or EXT_ID attributes.",
+            "tier": "CREATE",
+            "params": [
+              {
+                "name": "list_id",
+                "type": "int",
+                "required": true,
+                "description": "Id of the list"
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "contacts",
+                "type": "PostContactInfoContacts"
+              }
+            ],
+            "schema": {
+              "data": "AddContactToListData",
+              "result": "AddContactToListResult"
+            },
+            "_orig_brevo_name": "lists_add_contact_to_list",
+            "_sdk_call": "contacts.add_contact_to_list"
+          },
+          "remove_contact_from_list": {
+            "endpoint": "POST /contacts/lists/{list_id}/contacts/remove",
+            "description": "Remove contacts from a specific list by providing their email addresses, numeric IDs, EXT_ID attributes, or by setting \"all\" to true to remove all contacts from the list.",
+            "tier": "CREATE",
+            "params": [
+              {
+                "name": "list_id",
+                "type": "int",
+                "required": true,
+                "description": "Id of the list"
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "contacts",
+                "type": "PostContactInfoContacts"
+              }
+            ],
+            "schema": {
+              "data": "RemoveContactFromListData",
+              "result": "RemoveContactFromListResult"
+            },
+            "_orig_brevo_name": "lists_remove_contact_from_list",
+            "_sdk_call": "contacts.remove_contact_from_list"
+          },
+          "create_folder": {
+            "endpoint": "POST /contacts/folders",
+            "description": "Create a new folder to organize contact lists.",
+            "tier": "CREATE",
+            "params": [
+              {
+                "name": "name",
+                "type": "str",
+                "required": true,
+                "description": "Name of the folder"
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "id",
+                "type": "int"
+              }
+            ],
+            "schema": {
+              "data": "CreateFolderData",
+              "result": "CreateFolderResult"
+            },
+            "_orig_brevo_name": "folders_create_folder",
+            "_sdk_call": "contacts.create_folder"
+          }
+        },
+        "built_from": [
+          "lists/get_lists.md",
+          "lists/get_list.md",
+          "lists/create_list.md",
+          "lists/update_list.md",
+          "lists/delete_list.md",
+          "lists/add_contact_to_list.md",
+          "lists/remove_contact_from_list.md"
+        ]
+      },
+      "email_campaigns": {
+        "file": "email_campaigns_tools.py",
+        "doc_source": null,
+        "register_fn": "register_email_campaigns_tools",
+        "tools": {
+          "list_email_campaigns": {
+            "endpoint": "GET /emailCampaigns",
+            "description": "Retrieve a paginated list of email campaigns.",
+            "tier": "GET",
+            "params": [
+              {
+                "name": "type",
+                "type": "Optional[GetEmailCampaignsRequestType]",
+                "required": false,
+                "description": "Filter on the type of the campaigns"
+              },
+              {
+                "name": "status",
+                "type": "Optional[GetEmailCampaignsRequestStatus]",
+                "required": false,
+                "description": "Filter on the status of the campaign"
+              },
+              {
+                "name": "statistics",
+                "type": "Optional[GetEmailCampaignsRequestStatistics]",
+                "required": false,
+                "description": "Filter on the type of statistics required. Example: **globalStats** value will only fetch globalStats info of the campaign in the returned response. This option only returns data for events that occurred in the last 6 months. For older campaigns, it is advisable to use the **Get Campaign Report** endpoint."
+              },
+              {
+                "name": "start_date",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "**Mandatory if endDate is used.** Starting (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent email campaigns. **Prefer to pass your timezone in date-time format for accurate result.** Only available if `status` is not passed or is set to `sent`. The date range between `startDate` and `endDate` must not exceed 2 years. `startDate` must not be in the future."
+              },
+              {
+                "name": "end_date",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "**Mandatory if startDate is used.** Ending (urlencoded) UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ) to filter the sent email campaigns. **Prefer to pass your timezone in date-time format for accurate result.** Only available if `status` is not passed or is set to `sent`. The date range between `startDate` and `endDate` must not exceed 2 years. `endDate` must not be in the future."
+              },
+              {
+                "name": "limit",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Number of documents per page"
+              },
+              {
+                "name": "offset",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Index of the first document in the page"
+              },
+              {
+                "name": "sort",
+                "type": "Optional[GetEmailCampaignsRequestSort]",
+                "required": false,
+                "description": "Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed"
+              },
+              {
+                "name": "exclude_html_content",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Use this flag to exclude htmlContent from the response body. If set to **true**, the htmlContent field will be returned as an empty string in the response body."
+              },
+              {
+                "name": "exclude_pdf_attachment",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Use this flag to filter out campaigns that have a PDF attachment. If set to **true**, only campaigns without a PDF attachment (or with no attachment at all) will be returned."
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "campaigns",
+                "type": "Optional[List[GetEmailCampaignsResponseCampaignsItem]]"
+              },
+              {
+                "name": "count",
+                "type": "Optional[int]"
+              }
+            ],
+            "schema": {
+              "data": "ListEmailCampaignsData",
+              "result": "ListEmailCampaignsResult"
+            },
+            "_orig_brevo_name": "email_campaign_management_get_email_campaigns",
+            "_sdk_call": "email_campaigns.get_email_campaigns"
+          },
+          "create_email_campaign": {
+            "endpoint": "POST /emailCampaigns",
+            "description": "Create a new email campaign.",
+            "tier": "CREATE",
+            "params": [
+              {
+                "name": "ab_testing",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Status of A/B Test. abTesting = false means it is disabled & abTesting = true means it is enabled. **subjectA, subjectB, splitRule, winnerCriteria & winnerDelay** will be considered when abTesting is set to true. subjectA & subjectB are mandatory together & subject if passed is ignored. **Can be set to true only if sendAtBestTime is false**. You will be able to set up two subject lines for your campaign and send them to a random sample of your total recipients. Half of the test group will receive version A, and the other half will receive version B"
+              },
+              {
+                "name": "attachment_url",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Absolute url of the attachment (no local file). Extension allowed: #### xlsx, xls, ods, docx, docm, doc, csv, pdf, txt, gif, jpg, jpeg, png, tif, tiff, rtf, bmp, cgm, css, shtml, html, htm, zip, xml, ppt, pptx, tar, ez, ics, mobi, msg, pub and eps"
+              },
+              {
+                "name": "email_expiration_date",
+                "type": "Optional[CreateEmailCampaignRequestEmailExpirationDate]",
+                "required": false,
+                "description": "Expiration configuration for the campaign email."
+              },
+              {
+                "name": "footer",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Footer of the email campaign"
+              },
+              {
+                "name": "header",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Header of the email campaign"
+              },
+              {
+                "name": "html_content",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "**Mandatory if htmlUrl and templateId are empty.** Body of the message (HTML). Must have more than 10 characters and be less than 1MB in size. Cannot be used together with `htmlUrl` or `templateId`."
+              },
+              {
+                "name": "html_url",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "**Mandatory if htmlContent and templateId are empty.** URL to the message (HTML). Cannot be used together with `htmlContent` or `templateId`. For example: **https://html.domain.com**"
+              },
+              {
+                "name": "increase_rate",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "**Mandatory if ipWarmupEnable is set to true**. Set a percentage increase rate for warming up your ip. We recommend you set the increase rate to 30% per day. If you want to send the same number of emails every day, set the daily increase value to 0%."
+              },
+              {
+                "name": "initial_quota",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "**Mandatory if ipWarmupEnable is set to true**. Set an initial quota greater than 1 for warming up your ip. We recommend you set a value of 3000."
+              },
+              {
+                "name": "inline_image_activation",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Use true to embedded the images in your email. Final size of the email should be less than **4MB**. Campaigns with embedded images can _not be sent to more than 5000 contacts_"
+              },
+              {
+                "name": "ip_warmup_enable",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "**Available for dedicated ip clients**. Set this to true if you wish to warm up your ip."
+              },
+              {
+                "name": "mirror_active",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Use true to enable the mirror link"
+              },
+              {
+                "name": "name",
+                "type": "str",
+                "required": true,
+                "description": "Name of the campaign"
+              },
+              {
+                "name": "params",
+                "type": "Optional[Dict[str, Any]]",
+                "required": false,
+                "description": "Pass the set of attributes to customize the type classic campaign. For example: **{\"FNAME\":\"Joe\", \"LNAME\":\"Doe\"}**. Only available if **type** is **classic**. It's considered only if campaign is in _New Template Language format_. The New Template Language is dependent on the values of **subject, htmlContent/htmlUrl, sender.name & toField**"
+              },
+              {
+                "name": "preview_text",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Preview text or preheader of the email campaign"
+              },
+              {
+                "name": "recipients",
+                "type": "Optional[CreateEmailCampaignRequestRecipients]",
+                "required": false,
+                "description": "Segment ids and List ids to include/exclude from campaign"
+              },
+              {
+                "name": "reply_to",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Email on which the campaign recipients will be able to reply to"
+              },
+              {
+                "name": "scheduled_at",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Sending UTC date-time (YYYY-MM-DDTHH:mm:ss.SSSZ). **Prefer to pass your timezone in date-time format for accurate result**. If sendAtBestTime is set to true, your campaign will be sent according to the date passed (ignoring the time part). For example: **2017-06-01T12:30:00+02:00**"
+              },
+              {
+                "name": "send_at_best_time",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Set this to true if you want to send your campaign at best time."
+              },
+              {
+                "name": "sender",
+                "type": "CreateEmailCampaignRequestSender",
+                "required": true,
+                "description": "Sender details including id or email and name (optional). Only one of either Sender\u2019s email or Sender\u2019s ID shall be passed in one request at a time. Passing both `email` and `id` will result in an error. For example: **{\"name\":\"xyz\", \"email\":\"example@abc.com\"}** or **{\"name\":\"xyz\", \"id\":123}**"
+              },
+              {
+                "name": "split_rule",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Add the size of your test groups. **Mandatory if abTesting = true & 'recipients' is passed**. We'll send version A and B to a random sample of recipients, and then the winning version to everyone else"
+              },
+              {
+                "name": "subject",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Subject of the campaign. **Mandatory if abTesting is false**. Ignored if abTesting is true."
+              },
+              {
+                "name": "subject_a",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Subject A of the campaign. **Mandatory if abTesting = true**. subjectA & subjectB should have unique value"
+              },
+              {
+                "name": "subject_b",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Subject B of the campaign. **Mandatory if abTesting = true**. subjectA & subjectB should have unique value"
+              },
+              {
+                "name": "tag",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Tag of the campaign"
+              },
+              {
+                "name": "template_id",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "**Mandatory if htmlContent and htmlUrl are empty.** Id of the transactional email template with status _active_. Used to copy only its content fetched from htmlContent/htmlUrl to an email campaign for RSS feature. Cannot be used together with `htmlContent` or `htmlUrl`."
+              },
+              {
+                "name": "to_field",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "To personalize the **To** Field. If you want to include the first name and last name of your recipient, add **{FNAME} {LNAME}**. These contact attributes must already exist in your Brevo account. If input parameter **params** used please use **{{contact.FNAME}} {{contact.LNAME}}** for personalization"
+              },
+              {
+                "name": "unsubscription_page_id",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Enter an unsubscription page id. The page id is a 24 digit alphanumeric id that can be found in the URL when editing the page. If not entered, then the default unsubscription page will be used."
+              },
+              {
+                "name": "update_form_id",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "**Mandatory if templateId is used containing the {{ update_profile }} tag**. Enter an update profile form id. The form id is a 24 digit alphanumeric id that can be found in the URL when editing the form. If not entered, then the default update profile form will be used."
+              },
+              {
+                "name": "utm_campaign",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Customize the utm_campaign value. If this field is empty, the campaign name will be used. Only alphanumeric characters and spaces are allowed"
+              },
+              {
+                "name": "utm_content",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Customize the utm_content value. Appears on outgoing tracking links alongside utm_campaign. Only alphanumeric characters and spaces are allowed"
+              },
+              {
+                "name": "utm_term",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Customize the utm_term value. Appears on outgoing tracking links alongside utm_campaign. Only alphanumeric characters and spaces are allowed"
+              },
+              {
+                "name": "winner_criteria",
+                "type": "Optional[CreateEmailCampaignRequestWinnerCriteria]",
+                "required": false,
+                "description": "Choose the metrics that will determinate the winning version. **Mandatory if _splitRule_ >= 1 and < 50**. If splitRule = 50, `winnerCriteria` is ignored if passed"
+              },
+              {
+                "name": "winner_delay",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Choose the duration of the test in hours. Maximum is 7 days, pass 24*7 = 168 hours. The winning version will be sent at the end of the test. **Mandatory if _splitRule_ >= 1 and < 50**. If splitRule = 50, `winnerDelay` is ignored if passed"
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "id",
+                "type": "int"
+              }
+            ],
+            "schema": {
+              "data": "CreateEmailCampaignData",
+              "result": "CreateEmailCampaignResult"
+            },
+            "_orig_brevo_name": "email_campaign_management_create_email_campaign",
+            "_sdk_call": "email_campaigns.create_email_campaign"
+          },
+          "send_email_campaign_now": {
+            "endpoint": "POST /emailCampaigns/{campaign_id}/sendNow",
+            "description": "Send an existing email campaign immediately by scheduling it for the current time.",
+            "tier": "CREATE",
+            "params": [
+              {
+                "name": "campaign_id",
+                "type": "int",
+                "required": true,
+                "description": "Id of the campaign"
+              }
+            ],
+            "response_fields": [],
+            "schema": {
+              "data": "SendEmailCampaignNowData",
+              "result": "SendEmailCampaignNowResult"
+            },
+            "_orig_brevo_name": "email_campaign_management_send_email_campaign_now",
+            "_sdk_call": "email_campaigns.send_email_campaign_now"
+          },
+          "send_test_email": {
+            "endpoint": "POST /emailCampaigns/{campaign_id}/sendTest",
+            "description": "Send a test version of an email campaign to specified email addresses or your entire test list. Limited to 50 test emails per day.",
+            "tier": "CREATE",
+            "params": [
+              {
+                "name": "campaign_id",
+                "type": "int",
+                "required": true,
+                "description": "Id of the campaign"
+              },
+              {
+                "name": "email_to",
+                "type": "Optional[Sequence[str]]",
+                "required": false,
+                "description": "List of the email addresses of the recipients whom you wish to send the test mail. If left empty, the test mail will be sent to your entire test list."
+              }
+            ],
+            "response_fields": [],
+            "schema": {
+              "data": null,
+              "result": "SendTestEmailResult"
+            },
+            "_orig_brevo_name": "email_campaign_management_send_test_email",
+            "_sdk_call": "email_campaigns.send_test_email"
+          }
+        },
+        "built_from": [
+          "email/get_email_campaigns.md",
+          "email/create_email_campaign.md",
+          "email/get_email_campaign.md",
+          "email/update_email_campaign.md",
+          "email/delete_email_campaign.md",
+          "email/send_email_campaign_now.md",
+          "email/send_test_email.md",
+          "email/send_report.md",
+          "email/update_campaign_status.md",
+          "email/email_export_recipients.md",
+          "email/get_shared_template_url.md",
+          "email/upload_image_to_gallery.md"
+        ]
+      },
+      "senders": {
+        "file": "senders_tools.py",
+        "doc_source": null,
+        "register_fn": "register_senders_tools",
+        "tools": {
+          "list_senders": {
+            "endpoint": "GET /senders",
+            "description": "Retrieves a list of all email senders from your Brevo account with optional filtering.",
+            "tier": "GET",
+            "params": [
+              {
+                "name": "ip",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Filter your senders for a specific ip. **Available for dedicated IP usage only**"
+              },
+              {
+                "name": "domain",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Filter your senders for a specific domain"
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "senders",
+                "type": "Optional[List[GetSendersResponseSendersItem]]"
+              }
+            ],
+            "schema": {
+              "data": "ListSendersData",
+              "result": "ListSendersResult"
+            },
+            "_orig_brevo_name": "senders_get_senders",
+            "_sdk_call": "senders.get_senders"
+          },
+          "create_sender": {
+            "endpoint": "POST /senders",
+            "description": "Creates a new email sender in your Brevo account.",
+            "tier": "CREATE",
+            "params": [
+              {
+                "name": "email",
+                "type": "str",
+                "required": true,
+                "description": "From email to use for the sender. A verification email will be sent to this address."
+              },
+              {
+                "name": "ips",
+                "type": "Optional[Sequence[CreateSenderRequestIpsItem]]",
+                "required": false,
+                "description": "**Mandatory in case of dedicated IP**. IPs to associate to the sender. Not required for standard accounts."
+              },
+              {
+                "name": "name",
+                "type": "str",
+                "required": true,
+                "description": "From Name to use for the sender"
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "dkimError",
+                "type": "Optional[bool]"
+              },
+              {
+                "name": "id",
+                "type": "int"
+              },
+              {
+                "name": "spfError",
+                "type": "Optional[bool]"
+              }
+            ],
+            "schema": {
+              "data": "CreateSenderData",
+              "result": "CreateSenderResult"
+            },
+            "_orig_brevo_name": "senders_create_sender",
+            "_sdk_call": "senders.create_sender"
+          }
+        },
+        "built_from": [
+          "senders/get_senders.md",
+          "senders/create_sender.md",
+          "senders/update_sender.md",
+          "senders/delete_sender.md",
+          "senders/validate_sender_by_otp.md"
+        ]
+      },
+      "templates": {
+        "file": "templates_tools.py",
+        "doc_source": null,
+        "register_fn": "register_templates_tools",
+        "tools": {
+          "list_email_templates": {
+            "endpoint": "GET /smtp/templates",
+            "description": "Retrieve a paginated list of all transactional email templates (including automation templates) with their details such as name, subject, sender, status, HTML content, and timestamps.",
+            "tier": "GET",
+            "params": [
+              {
+                "name": "template_status",
+                "type": "Optional[bool]",
+                "required": false,
+                "description": "Filter on the status of the template. Active = true, inactive = false"
+              },
+              {
+                "name": "limit",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Number of documents returned per page"
+              },
+              {
+                "name": "offset",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Index of the first document in the page"
+              },
+              {
+                "name": "sort",
+                "type": "Optional[GetSmtpTemplatesRequestSort]",
+                "required": false,
+                "description": "Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed"
+              },
+              {
+                "name": "editor_type",
+                "type": "Optional[Literal[\"richTextEditor\"]]",
+                "required": false,
+                "description": "Filter on the editor type used to create the template. Currently only `richTextEditor` is supported as a filter value."
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "count",
+                "type": "Optional[int]"
+              },
+              {
+                "name": "templates",
+                "type": "Optional[List[GetSmtpTemplateOverview]]"
+              }
+            ],
+            "schema": {
+              "data": "ListEmailTemplatesData",
+              "result": "ListEmailTemplatesResult"
+            },
+            "_orig_brevo_name": "templates_get_smtp_templates",
+            "_sdk_call": "transactional_emails.get_smtp_templates"
+          }
+        },
+        "built_from": [
+          "templates/get_smtp_templates.md",
+          "templates/get_smtp_template.md",
+          "templates/create_smtp_template.md",
+          "templates/update_smtp_template.md",
+          "templates/delete_smtp_template.md",
+          "templates/send_test_template.md",
+          "templates/post_preview_smtp_email_templates.md"
+        ]
+      },
+      "transactional_email": {
+        "file": "transactional_email_tools.py",
+        "doc_source": null,
+        "register_fn": "register_transactional_email_tools",
+        "tools": {
+          "send_transactional_email": {
+            "endpoint": "POST /smtp/email",
+            "description": "Send a transactional email to one or more recipients, either using inline HTML content or a pre-built template via `templateId`.",
+            "tier": "CREATE",
+            "params": [
+              {
+                "name": "attachment",
+                "type": "Optional[Sequence[SendTransacEmailRequestAttachmentItem]]",
+                "required": false,
+                "description": "Array of attachment objects. Each attachment must include either an absolute URL (no local file paths) or base64-encoded content, along with the attachment filename. The `name` field is required when `content` is provided. Supported file extensions: xlsx, xls, ods, docx, docm, doc, csv, pdf, txt, gif, jpg, jpeg, png, tif, tiff, rtf, bmp, cgm, css, shtml, html, htm, zip, xml, ppt, pptx, tar, ez, ics, mobi, msg, pub, eps, odt, mp3, m4a, m4v, wma, ogg, flac, wav, aif, aifc, aiff, mp4, mov, avi, mkv, mpeg, mpg, wmv, pkpass, xlsm. When `templateId` is specified: if the template uses the New Template Language format, both `url` and `content` attachment types are supported; if the template uses the Old Template Language format, the `attachment` parameter is ignored."
+              },
+              {
+                "name": "batch_id",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "UUIDv4 identifier for the scheduled batch of transactional emails. If omitted, a valid UUIDv4 batch identifier is automatically generated."
+              },
+              {
+                "name": "bcc",
+                "type": "Optional[Sequence[SendTransacEmailRequestBccItem]]",
+                "required": false,
+                "description": "Array of BCC recipient objects. Each object contains an email address and an optional name."
+              },
+              {
+                "name": "cc",
+                "type": "Optional[Sequence[SendTransacEmailRequestCcItem]]",
+                "required": false,
+                "description": "Array of CC recipient objects. Each object contains an email address and an optional name."
+              },
+              {
+                "name": "headers",
+                "type": "Optional[Dict[str, Any]]",
+                "required": false,
+                "description": "Custom email headers (non-standard headers) to include in the email. The `sender.ip` header can be set to specify the IP address used for sending transactional emails (dedicated IP users only). Header names must use Title-Case-Format (words separated by hyphens with the first letter of each word capitalized). Headers not in this format are automatically converted. Standard email headers are not supported. Example: `{\"sender.ip\":\"1.2.3.4\", \"X-Mailin-custom\":\"some_custom_value\", \"Idempotency-Key\":\"abc-123\"}`"
+              },
+              {
+                "name": "html_content",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "HTML body content of the email. Required when `templateId` is not provided. Ignored when `templateId` is provided."
+              },
+              {
+                "name": "message_versions",
+                "type": "Optional[Sequence[SendTransacEmailRequestMessageVersionsItem]]",
+                "required": false,
+                "description": "Per-recipient content/variable overrides for batch sending."
+              },
+              {
+                "name": "params",
+                "type": "Optional[Dict[str, Any]]",
+                "required": false,
+                "description": "Key-value pairs for template variable substitution. Only applicable when the template uses the New Template Language format."
+              },
+              {
+                "name": "reply_to",
+                "type": "Optional[SendTransacEmailRequestReplyTo]",
+                "required": false,
+                "description": "Reply-to email address and optional name."
+              },
+              {
+                "name": "scheduled_at",
+                "type": "Optional[dt.datetime]",
+                "required": false,
+                "description": "UTC date-time when the email should be sent (format: YYYY-MM-DDTHH:mm:ss.SSSZ). Include timezone information in the date-time value. Scheduled emails may be delayed by up to 5 minutes."
+              },
+              {
+                "name": "sender",
+                "type": "Optional[SendTransacEmailRequestSender]",
+                "required": false,
+                "description": "Sender information. Required when `templateId` is not provided. Specify either an email address (with optional name) or a sender ID. The `name` field is ignored when `id` is provided."
+              },
+              {
+                "name": "subject",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Email subject line. Required when `templateId` is not provided."
+              },
+              {
+                "name": "tags",
+                "type": "Optional[Sequence[str]]",
+                "required": false,
+                "description": "Array of tags for categorizing and filtering emails"
+              },
+              {
+                "name": "template_id",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Template identifier"
+              },
+              {
+                "name": "text_content",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "Plain text body content of the email. Ignored when `templateId` is provided."
+              },
+              {
+                "name": "to",
+                "type": "Optional[Sequence[SendTransacEmailRequestToItem]]",
+                "required": false,
+                "description": "Array of recipient objects. Each object contains an email address and an optional display name. Required when `messageVersions` is not provided. Ignored when `messageVersions` is provided. Example: `[{\"name\":\"Jimmy\", \"email\":\"jimmy@example.com\"}, {\"name\":\"Joe\", \"email\":\"joe@example.com\"}]`"
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "messageId",
+                "type": "Optional[str]"
+              },
+              {
+                "name": "messageIds",
+                "type": "Optional[List[str]]"
+              }
+            ],
+            "schema": {
+              "data": "SendTransactionalEmailData",
+              "result": "SendTransactionalEmailResult"
+            },
+            "_orig_brevo_name": "transac_templates_send_transac_email",
+            "_sdk_call": "transactional_emails.send_transac_email"
+          },
+          "list_transactional_emails": {
+            "endpoint": "GET /smtp/emails",
+            "description": "Retrieve a paginated list of sent transactional emails.",
+            "tier": "GET",
+            "params": [
+              {
+                "name": "email",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "**Mandatory if templateId and messageId are not passed in query filters.** Email address to which transactional email has been sent."
+              },
+              {
+                "name": "template_id",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "**Mandatory if email and messageId are not passed in query filters.** Id of the template that was used to compose transactional email."
+              },
+              {
+                "name": "message_id",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "**Mandatory if templateId and email are not passed in query filters.** Message ID of the transactional email sent."
+              },
+              {
+                "name": "start_date",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "**Mandatory if endDate is used.** Starting date (YYYY-MM-DD) from which you want to fetch the list. **Maximum time period that can be selected is one month**."
+              },
+              {
+                "name": "end_date",
+                "type": "Optional[str]",
+                "required": false,
+                "description": "**Mandatory if startDate is used.** Ending date (YYYY-MM-DD) till which you want to fetch the list. **Maximum time period that can be selected is one month.**"
+              },
+              {
+                "name": "sort",
+                "type": "Optional[GetTransacEmailsListRequestSort]",
+                "required": false,
+                "description": "Sort the results in the ascending/descending order of record creation. Default order is **descending** if `sort` is not passed"
+              },
+              {
+                "name": "limit",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Number of documents returned per page"
+              },
+              {
+                "name": "offset",
+                "type": "Optional[int]",
+                "required": false,
+                "description": "Index of the first document in the page"
+              }
+            ],
+            "response_fields": [
+              {
+                "name": "count",
+                "type": "Optional[int]"
+              },
+              {
+                "name": "transactionalEmails",
+                "type": "Optional[List[GetTransacEmailsListResponseTransactionalEmailsItem]]"
+              }
+            ],
+            "schema": {
+              "data": "ListTransactionalEmailsData",
+              "result": "ListTransactionalEmailsResult"
+            },
+            "_orig_brevo_name": "transac_templates_get_transac_emails_list",
+            "_sdk_call": "transactional_emails.get_transac_emails_list"
+          }
+        },
+        "built_from": [
+          "transac/send_transac_email.md",
+          "transac/get_transac_emails_list.md",
+          "transac/get_transac_email_content.md",
+          "transac/get_scheduled_email_by_id.md",
+          "transac/delete_scheduled_email_by_id.md",
+          "transac/get_transac_blocked_contacts.md",
+          "transac/delete_smtp_blocked_contacts_by_email.md",
+          "transac/get_blocked_domains.md",
+          "transac/block_new_domain.md",
+          "transac/delete_blocked_domain.md",
+          "transac/delete_hardbounces.md",
+          "transac/delete_smtp_log_by_identifier.md"
+        ]
+      },
+      "accounts": {
+        "file": "accounts_tools.py",
+        "doc_source": null,
+        "register_fn": "register_accounts_tools",
+        "tools": {
+          "get_account": {
+            "endpoint": "GET /account",
+            "description": "Retrieves details of the authenticated Brevo account \u2014 organization and user identifiers, company and address information, enterprise status, marketing automation configuration, plan/credit allocations, and SMTP relay configuration for transactional email.",
+            "tier": "GET",
+            "params": [],
+            "response_fields": [
+              {
+                "name": "organization_id",
+                "type": "str"
+              },
+              {
+                "name": "user_id",
+                "type": "int"
+              },
+              {
+                "name": "enterprise",
+                "type": "bool"
+              },
+              {
+                "name": "companyName",
+                "type": "str"
+              },
+              {
+                "name": "email",
+                "type": "str"
+              },
+              {
+                "name": "firstName",
+                "type": "str"
+              },
+              {
+                "name": "lastName",
+                "type": "str"
+              },
+              {
+                "name": "address",
+                "type": "Optional[GetAccountResponseAddress]"
+              },
+              {
+                "name": "marketingAutomation",
+                "type": "Optional[GetAccountResponseMarketingAutomation]"
+              },
+              {
+                "name": "plan",
+                "type": "List[GetAccountResponsePlanItem]"
+              },
+              {
+                "name": "relay",
+                "type": "GetAccountResponseRelay"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "resources": {},
+  "prompts": {}
+}
