@@ -24,7 +24,7 @@ from ..schemas.email_campaigns import (
     SendEmailCampaignNowResult,
     SendTestEmailResult,
 )
-from ._helpers import _err, _handle_request_exc
+from ._helpers import _err, _handle_request_exc, _without_none
 
 logger = logging.getLogger("brevo-mcp.tools.email_campaigns")
 
@@ -137,45 +137,50 @@ def register_email_campaigns_tools(mcp: FastMCP) -> None:
             return _err(CreateEmailCampaignResult, tlog, "VALIDATION_ERROR", "subject_a and subject_b are required together when ab_testing is true", 400)
         if not ab_testing and not subject:
             return _err(CreateEmailCampaignResult, tlog, "VALIDATION_ERROR", "subject is required when ab_testing is not true", 400)
+        has_sender_id = sender.get("id") is not None
+        has_sender_email = sender.get("email") is not None
+        if has_sender_id == has_sender_email:
+            return _err(CreateEmailCampaignResult, tlog, "VALIDATION_ERROR", "sender must contain exactly one of id or email", 400)
 
         try:
             client = service.get_service()
-            resp = client.email_campaigns.with_raw_response.create_email_campaign(
-                ab_testing=ab_testing,
-                attachment_url=attachment_url,
-                email_expiration_date=email_expiration_date,
-                footer=footer,
-                header=header,
-                html_content=html_content,
-                html_url=html_url,
-                increase_rate=increase_rate,
-                initial_quota=initial_quota,
-                inline_image_activation=inline_image_activation,
-                ip_warmup_enable=ip_warmup_enable,
-                mirror_active=mirror_active,
-                name=name,
-                params=params,
-                preview_text=preview_text,
-                recipients=recipients,
-                reply_to=reply_to,
-                scheduled_at=scheduled_at,
-                send_at_best_time=send_at_best_time,
-                sender=sender,
-                split_rule=split_rule,
-                subject=subject,
-                subject_a=subject_a,
-                subject_b=subject_b,
-                tag=tag,
-                template_id=template_id,
-                to_field=to_field,
-                unsubscription_page_id=unsubscription_page_id,
-                update_form_id=update_form_id,
-                utm_campaign=utm_campaign,
-                utm_content=utm_content,
-                utm_term=utm_term,
-                winner_criteria=winner_criteria,
-                winner_delay=winner_delay,
-            )
+            request = _without_none({
+                "ab_testing": ab_testing,
+                "attachment_url": attachment_url,
+                "email_expiration_date": email_expiration_date,
+                "footer": footer,
+                "header": header,
+                "html_content": html_content,
+                "html_url": html_url,
+                "increase_rate": increase_rate,
+                "initial_quota": initial_quota,
+                "inline_image_activation": inline_image_activation,
+                "ip_warmup_enable": ip_warmup_enable,
+                "mirror_active": mirror_active,
+                "name": name,
+                "params": params,
+                "preview_text": preview_text,
+                "recipients": recipients,
+                "reply_to": reply_to,
+                "scheduled_at": scheduled_at,
+                "send_at_best_time": send_at_best_time,
+                "sender": sender,
+                "split_rule": split_rule,
+                "subject": subject,
+                "subject_a": subject_a,
+                "subject_b": subject_b,
+                "tag": tag,
+                "template_id": template_id,
+                "to_field": to_field,
+                "unsubscription_page_id": unsubscription_page_id,
+                "update_form_id": update_form_id,
+                "utm_campaign": utm_campaign,
+                "utm_content": utm_content,
+                "utm_term": utm_term,
+                "winner_criteria": winner_criteria,
+                "winner_delay": winner_delay,
+            })
+            resp = client.email_campaigns.with_raw_response.create_email_campaign(**request)
             tlog.success()
             return CreateEmailCampaignResult(
                 success=True,

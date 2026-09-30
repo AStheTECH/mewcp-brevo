@@ -25,7 +25,7 @@ from ..schemas.contacts import (
     UpdateContactData,
     UpdateContactResult,
 )
-from ._helpers import _err, _handle_request_exc
+from ._helpers import _err, _handle_request_exc, _without_none
 
 logger = logging.getLogger("brevo-mcp.tools.contacts")
 
@@ -103,28 +103,28 @@ def register_contacts_tools(mcp: FastMCP) -> None:
         smtp_blacklist_sender: list[str] | None = Field(default=None, description="Transactional email senders forbidden for this contact. Only takes effect when update_enabled is true."),
         update_enabled: bool | None = Field(default=None, description="Set true to update the contact in place if one with a matching identifier already exists, instead of failing."),
         force_merge: bool | None = Field(default=None, description="Set true to force-merge with an existing contact that shares an identifier (email, SMS, ext_id, whatsapp, landline), keeping the one with the most recent last_modified timestamp. When false (default), a conflicting identifier returns a 4xx error."),
-        get_id: bool | None = Field(default=None, description="Set true to have the response include the ID of the surviving contact after a force_merge."),
+        get_id: bool | None = Field(default=None, description="Set true to include the ID of the created or surviving contact in the response. Omit to use Brevo's default behavior."),
     ) -> CreateContactResult:
         tlog = ToolLogger(logger, "create_contact")
 
         has_sms = bool(attributes and attributes.get("SMS"))
         if not email and not ext_id and not has_sms:
             return _err(CreateContactResult, tlog, "VALIDATION_ERROR", "Provide at least one of email, ext_id, or an SMS attribute", 400)
-
         try:
             client = service.get_service()
-            resp = client.contacts.with_raw_response.create_contact(
-                attributes=attributes,
-                email=email,
-                email_blacklisted=email_blacklisted,
-                ext_id=ext_id,
-                list_ids=list_ids,
-                sms_blacklisted=sms_blacklisted,
-                smtp_blacklist_sender=smtp_blacklist_sender,
-                update_enabled=update_enabled,
-                force_merge=force_merge,
-                get_id=get_id,
-            )
+            request = _without_none({
+                "attributes": attributes,
+                "email": email,
+                "email_blacklisted": email_blacklisted,
+                "ext_id": ext_id,
+                "list_ids": list_ids,
+                "sms_blacklisted": sms_blacklisted,
+                "smtp_blacklist_sender": smtp_blacklist_sender,
+                "update_enabled": update_enabled,
+                "force_merge": force_merge,
+                "get_id": get_id,
+            })
+            resp = client.contacts.with_raw_response.create_contact(**request)
             tlog.success()
             return CreateContactResult(
                 success=True,

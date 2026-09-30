@@ -9,6 +9,10 @@ from ..logging_utils import ToolLogger
 from ..schemas import ToolError
 
 
+def _without_none(values: dict):
+    return {key: value for key, value in values.items() if value is not None}
+
+
 def _err(result_class, tlog, code, message, status, retriable=False, retry_after=None):
     tlog.failure(code, message)
     return result_class(
